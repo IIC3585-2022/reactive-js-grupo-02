@@ -12,7 +12,7 @@ export default class TileMap {
     this.pac0.src = "../img/pac0.png";
   }
 
-  map = [
+  map = of([
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
@@ -24,7 +24,7 @@ export default class TileMap {
     [1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  ];
+  ]);
 
   draw(ctx) {
     for(let row = 0; row < this.map.length; row++) {
@@ -34,11 +34,19 @@ export default class TileMap {
         } else if(this.map[row][col] === 0) {
           this.#drawImage(this.yellowDot, col * this.tileSize, row * this.tileSize, ctx);
         }
-        // else if(this.map[row][col] === 0) {
-        //   this.#drawImage(this.pac0, col * this.tileSize, row * this.tileSize, ctx);
-        // }
+
       }
     }
+    // this.map.subscribe(row => {
+    //   const cols = of(row);
+    //   cols.subscribe(col => {
+    //     if(col === 1) {
+    //       this.#drawImage(this.wall, col * this.tileSize, row * this.tileSize, ctx);
+    //     } else if(col === 0) {
+    //       this.#drawImage(this.yellowDot, col * this.tileSize, row * this.tileSize, ctx);
+    //     }
+    //   });
+    // })
   }
 
   #drawImage(img, x, y, ctx) {
