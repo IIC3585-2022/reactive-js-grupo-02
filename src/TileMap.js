@@ -1,4 +1,4 @@
-import { of } from "rxjs";
+import { from } from "rxjs";
 export default class TileMap {
   constructor(tileSize){
     this.tileSize = tileSize;
@@ -12,7 +12,7 @@ export default class TileMap {
     this.pac0.src = "../img/pac0.png";
   }
 
-  map = of([
+  map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
@@ -24,29 +24,24 @@ export default class TileMap {
     [1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  ]);
+  ];
+  map_rxjs = from(this.map);
 
   draw(ctx) {
-    for(let row = 0; row < this.map.length; row++) {
-      for(let col = 0; col < this.map[row].length; col++) {
-        if(this.map[row][col] === 1) {
-          this.#drawImage(this.wall, col * this.tileSize, row * this.tileSize, ctx);
-        } else if(this.map[row][col] === 0) {
-          this.#drawImage(this.yellowDot, col * this.tileSize, row * this.tileSize, ctx);
+    let y = 0;
+    this.map_rxjs.subscribe(row => {
+      const cols = from(row);
+      let x = 0;
+      cols.subscribe(col => {
+        if(col === 1) {
+          this.#drawImage(this.wall, x * this.tileSize, y * this.tileSize, ctx);
+        } else if(col === 0) {
+          this.#drawImage(this.yellowDot, x * this.tileSize, y * this.tileSize, ctx);
         }
-
-      }
-    }
-    // this.map.subscribe(row => {
-    //   const cols = of(row);
-    //   cols.subscribe(col => {
-    //     if(col === 1) {
-    //       this.#drawImage(this.wall, col * this.tileSize, row * this.tileSize, ctx);
-    //     } else if(col === 0) {
-    //       this.#drawImage(this.yellowDot, col * this.tileSize, row * this.tileSize, ctx);
-    //     }
-    //   });
-    // })
+        x++;
+      });
+      y++;
+    })
   }
 
   #drawImage(img, x, y, ctx) {
