@@ -1,4 +1,5 @@
 import { from } from "rxjs";
+import Pacman from './Pacman.js';
 export default class TileMap {
   constructor(tileSize){
     this.tileSize = tileSize;
@@ -11,10 +12,12 @@ export default class TileMap {
     this.pac0 = new Image();
     this.pac0.src = "../img/pac0.png";
   }
-
+// 1- wall
+// 0 - dots
+// 4 - pacman
   map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
     [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
     [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
@@ -46,6 +49,30 @@ export default class TileMap {
 
   #drawImage(img, x, y, ctx) {
     ctx.drawImage(img, x, y, this.tileSize, this.tileSize);
+  }
+
+  getPacman(velocity) {
+    let pacman = 0;
+    let y = 0;
+    this.map_rxjs.subscribe(row => {
+      const cols = from(row);
+      let x = 0;
+      cols.subscribe(col => {
+        if(col === 4) {
+          this.map[y][x] = 0;
+          pacman = new Pacman(
+            x * this.tileSize,
+            y * this.tileSize,
+            this.tileSize,
+            velocity,
+            this
+          );
+        }
+        x++;
+      });
+      y++;
+    })
+    return pacman;
   }
 
   setCanvasSize(canvas) {
