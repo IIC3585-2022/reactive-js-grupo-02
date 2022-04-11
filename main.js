@@ -1,7 +1,5 @@
-import { Game } from '@/game';
+import { initialize } from '@/gameBreakpoints';
 
-window.addEventListener('load', () => {
-  const game = new Game();
+import './src/styles/index.css';
 
-  game.startGame();
-});
+window.addEventListener('load', initialize);

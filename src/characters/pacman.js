@@ -4,7 +4,6 @@ import { isBetween } from '@/utils.js';
 import { TILE_SIZE, REFRESH_RATE } from '@/constants';
 import { pacman } from '@/sprites';
 import { BaseCharacter } from './base.js';
-import { LAYOUT } from '../layout';
 
 /**
  * @typedef {import('rxjs').Observable} Observable
@@ -22,6 +21,8 @@ import { LAYOUT } from '../layout';
  * @typedef {Object} PacManOptions
  * @property {Direction=} direction
  * @property {('arrows' | 'letters')=} movementType
+ * @property {number=} positionX
+ * @property {number=} positionY
  */
 
 export class PacMan extends BaseCharacter {
@@ -46,9 +47,14 @@ export class PacMan extends BaseCharacter {
    * @param {PacManOptions=} options
    */
   constructor(drawer, options) {
-    const { direction = 'right', movementType = 'arrows' } = options || {};
+    const {
+      direction = 'right',
+      movementType = 'arrows',
+      positionX = TILE_SIZE,
+      positionY = TILE_SIZE,
+    } = options || {};
 
-    super(drawer, TILE_SIZE, TILE_SIZE, direction);
+    super(drawer, positionX, positionY, direction);
 
     setupMovementListener(this, movementType);
   }
