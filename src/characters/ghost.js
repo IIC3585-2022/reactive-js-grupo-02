@@ -1,4 +1,4 @@
-import { interval } from 'rxjs';
+import { Observable, interval } from 'rxjs';
 import { randomNumber } from '@/utils.js';
 import { TILE_SIZE } from '@/constants';
 import { LAYOUT } from '@/layout';
@@ -21,6 +21,14 @@ import { BaseCharacter } from './base.js';
  */
 
 export class Ghost extends BaseCharacter {
+  movementObservable = new Observable((subscriber) => {
+    const refreshSubscription = interval(40).subscribe(() => {
+      this.move();
+      subscriber.next({ positionX: this.positionX, positionY: this.positionY });
+    });
+    this.intervalSubscriptions.push(refreshSubscription);
+  });
+
   /**
    * @param {Drawer} drawer
    * @param {GhostOptions=} options
@@ -43,11 +51,12 @@ export class Ghost extends BaseCharacter {
   }
 
   start() {
-    interval(1000).subscribe(() => {
+    const directionIntentSubscription = interval(1000).subscribe(() => {
       const directionIntent = this.possibleDirections[randomNumber(0, 2)];
       this.changeDirectionIntent(directionIntent);
     });
-    interval(40).subscribe(() => this.move());
+    this.intervalSubscriptions.push(directionIntentSubscription);
+    this.movementObservable.subscribe();
   }
 
   /**

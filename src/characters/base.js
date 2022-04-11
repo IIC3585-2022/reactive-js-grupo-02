@@ -2,6 +2,10 @@ import { LAYOUT } from '@/layout';
 import { SPEED, TILE_SIZE } from '@/constants';
 
 /**
+ * @typedef {import('rxjs').Subscription} Subscription
+ */
+
+/**
  * @typedef {import('../drawer.js').Drawer} Drawer
  */
 
@@ -30,6 +34,9 @@ export class BaseCharacter {
   /** @type {Direction | null} */
   #directionIntent = null;
 
+  /** @type {Array<Subscription>} */
+  intervalSubscriptions = [];
+
   /**
    *
    * @param {Drawer} drawer
@@ -44,12 +51,26 @@ export class BaseCharacter {
     this.#direction = direction;
   }
 
+  get positionX() {
+    return this.#positionX;
+  }
+
+  get positionY() {
+    return this.#positionY;
+  }
+
   get direction() {
     return this.#direction;
   }
 
   start() { // eslint-disable-line class-methods-use-this
     throw new Error('#start isn\t implemented!');
+  }
+
+  stop() {
+    this.intervalSubscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
   }
 
   /**

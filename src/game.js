@@ -27,13 +27,13 @@ export class Game {
   constructor() {
     this.#drawer = new Drawer();
     this.#map = new Map(this.#drawer);
-    this.#pacman = new PacMan(this.#drawer);
     this.#ghost1 = new Ghost(this.#drawer);
     this.#ghost2 = new Ghost(
       this.#drawer,
       {
         positionX: TILE_SIZE,
         positionY: (LAYOUT.length - 2) * TILE_SIZE,
+        direction: 'right',
       },
     );
     this.#ghost3 = new Ghost(
@@ -41,20 +41,42 @@ export class Game {
       {
         positionX: (LAYOUT[0].length - 2) * TILE_SIZE,
         positionY: TILE_SIZE,
+        direction: 'down',
       },
     );
+
+    this.#pacman = new PacMan(this.#drawer);
+
+    this.#pacman.listenForCollisions(
+      this.#ghost1.movementObservable,
+      this.#ghost2.movementObservable,
+      this.#ghost3.movementObservable,
+    );
+
+    this.#pacman.notifier.subscribe(this.endGame.bind(this));
+
+    this.#draw();
   }
 
   startGame() {
+    this.#pacman.start();
+    this.#ghost1.start();
+    this.#ghost2.start();
+    this.#ghost3.start();
+  }
+
+  endGame() {
+    this.#ghost1.stop();
+    this.#ghost2.stop();
+    this.#ghost3.stop();
+    this.#pacman.stop();
+  }
+
+  #draw() {
     this.#map.drawMap();
     this.#pacman.draw();
     this.#ghost1.draw();
     this.#ghost2.draw();
     this.#ghost3.draw();
-
-    this.#pacman.start();
-    this.#ghost1.start();
-    this.#ghost2.start();
-    this.#ghost3.start();
   }
 }

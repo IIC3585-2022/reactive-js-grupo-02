@@ -3,7 +3,7 @@ import {
 } from 'rxjs';
 
 /**
- * @typedef {import('../pacman.js').PacMan} PacMan
+ * @typedef {import('../characters/pacman.js').PacMan} PacMan
  */
 
 /**

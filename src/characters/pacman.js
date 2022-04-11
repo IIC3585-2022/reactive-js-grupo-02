@@ -1,8 +1,13 @@
-import { interval } from 'rxjs';
+import { interval, merge, Subject } from 'rxjs';
 import { setupMovementListener } from '@/listeners/movement';
+import { isBetween } from '@/utils.js';
 import { TILE_SIZE } from '@/constants';
 import { pacman } from '@/sprites';
 import { BaseCharacter } from './base.js';
+
+/**
+ * @typedef {import('rxjs').Observable} Observable
+ */
 
 /**
  * @typedef {import('../drawer.js').Drawer} Drawer
@@ -30,6 +35,11 @@ export class PacMan extends BaseCharacter {
   /** @type {number} */
   #currentSprite = -1;
 
+  /** @type {Array<Observable>} */
+  #collisionObservables;
+
+  notifier = new Subject();
+
   /**
    * @param {Drawer} drawer
    * @param {PacManOptions=} options
@@ -43,7 +53,13 @@ export class PacMan extends BaseCharacter {
   }
 
   start() {
-    interval(40).subscribe(() => this.move());
+    const refreshSubscription = interval(40).subscribe(() => this.move());
+    this.intervalSubscriptions.push(refreshSubscription);
+    merge(...this.#collisionObservables).subscribe(this.handleGhostCollision.bind(this));
+  }
+
+  listenForCollisions(...observables) {
+    this.#collisionObservables = observables;
   }
 
   /**
@@ -52,5 +68,30 @@ export class PacMan extends BaseCharacter {
   getSprite() {
     this.#currentSprite = (this.#currentSprite + 1) % 4;
     return this.#sprites[this.direction][this.#currentSprite];
+  }
+
+  /**
+   * @param {object} positions
+   * @param {number} positions.positionX
+   * @param {number} positions.positionY
+   */
+  handleGhostCollision({ positionX, positionY }) {
+    /** @type {[number, number]} */
+    const bordersX = [this.positionX, this.positionX + TILE_SIZE];
+    /** @type {[number, number]} */
+    const bordersY = [this.positionY, this.positionY + TILE_SIZE];
+
+    const isBetweenX = (
+      isBetween(positionX, ...bordersX)
+      || isBetween(positionX + TILE_SIZE, ...bordersX)
+    );
+    const isBetweenY = (
+      isBetween(positionY, ...bordersY)
+      || isBetween(positionY + TILE_SIZE, ...bordersY)
+    );
+
+    if (isBetweenX && isBetweenY) {
+      this.notifier.next({ status: 'game_over' });
+    }
   }
 }
