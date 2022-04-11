@@ -4,7 +4,7 @@ import { PacMan } from './characters/pacman';
 import { Ghost } from './characters/ghost';
 import { TILE_SIZE } from './constants';
 import { LAYOUT } from './layout';
-import { showLooser } from './looserHandler';
+import { setupAndShowLooserContent } from './domHandlers';
 
 export class Game {
   /** @type {Drawer} */
@@ -46,7 +46,7 @@ export class Game {
     this.#ghosts.forEach((ghost) => ghost.stop());
     this.#pacman1.stop();
     this.#pacman2.stop();
-    showLooser(looser);
+    setupAndShowLooserContent(looser);
   }
 
   #initializeGhosts() {
