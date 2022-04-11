@@ -1,6 +1,6 @@
 import { Observable, interval } from 'rxjs';
 import { randomNumber } from '@/utils.js';
-import { TILE_SIZE } from '@/constants';
+import { TILE_SIZE, REFRESH_RATE } from '@/constants';
 import { LAYOUT } from '@/layout';
 import { ghost } from '@/sprites';
 import { BaseCharacter } from './base.js';
@@ -22,11 +22,10 @@ import { BaseCharacter } from './base.js';
 
 export class Ghost extends BaseCharacter {
   movementObservable = new Observable((subscriber) => {
-    const refreshSubscription = interval(40).subscribe(() => {
-      this.move();
+    const collisionCheckSubscription = interval(REFRESH_RATE).subscribe(() => {
       subscriber.next({ positionX: this.positionX, positionY: this.positionY });
     });
-    this.intervalSubscriptions.push(refreshSubscription);
+    this.intervalSubscriptions.push(collisionCheckSubscription);
   });
 
   /**
@@ -56,7 +55,9 @@ export class Ghost extends BaseCharacter {
       this.changeDirectionIntent(directionIntent);
     });
     this.intervalSubscriptions.push(directionIntentSubscription);
-    this.movementObservable.subscribe();
+
+    const refreshSubscription = interval(REFRESH_RATE).subscribe(() => this.move());
+    this.intervalSubscriptions.push(refreshSubscription);
   }
 
   /**

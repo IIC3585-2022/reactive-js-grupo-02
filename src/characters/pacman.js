@@ -1,9 +1,10 @@
 import { interval, merge, Subject } from 'rxjs';
 import { setupMovementListener } from '@/listeners/movement';
 import { isBetween } from '@/utils.js';
-import { TILE_SIZE } from '@/constants';
+import { TILE_SIZE, REFRESH_RATE } from '@/constants';
 import { pacman } from '@/sprites';
 import { BaseCharacter } from './base.js';
+import { LAYOUT } from '../layout';
 
 /**
  * @typedef {import('rxjs').Observable} Observable
@@ -53,7 +54,7 @@ export class PacMan extends BaseCharacter {
   }
 
   start() {
-    const refreshSubscription = interval(40).subscribe(() => this.move());
+    const refreshSubscription = interval(REFRESH_RATE).subscribe(() => this.move());
     this.intervalSubscriptions.push(refreshSubscription);
     merge(...this.#collisionObservables).subscribe(this.handleGhostCollision.bind(this));
   }
