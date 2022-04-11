@@ -1,3 +1,4 @@
+import { interval } from 'rxjs';
 import { Drawer } from './drawer';
 import { Map } from './map';
 import { PacMan } from './pacman';
@@ -21,8 +22,7 @@ export class Game {
   startGame() {
     this.#map.drawMap();
     this.#pacman.draw();
-    setInterval(() => {
-      this.#pacman.move();
-    }, 100);
+
+    interval(100).subscribe(() => this.#pacman.move());
   }
 }
