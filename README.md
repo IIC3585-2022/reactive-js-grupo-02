@@ -2,6 +2,8 @@
 
 Tarea sobre JS reactivo
 
+Se puede probar _online_ en [_https://reactive.daleal.dev_](https://reactive.daleal.dev)
+
 ## Uso
 
 Para usar esta tarea, se debe primero instalar las dependencias:
