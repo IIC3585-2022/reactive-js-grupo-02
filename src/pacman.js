@@ -1,8 +1,6 @@
 import { SPEED, TILE_SIZE } from '@/constants';
 import { LAYOUT } from '@/layout';
-import {
-  pacman0, pacman1, pacman2, pacman3,
-} from '@/sprites';
+import { pacman } from '@/sprites';
 import { setupMovementListener } from '@/listeners/movement';
 
 /**
@@ -20,8 +18,13 @@ import { setupMovementListener } from '@/listeners/movement';
  */
 
 export class PacMan {
-  /** @type {Array<HTMLImageElement>} */
-  #sprites = [pacman0, pacman1, pacman2, pacman3];
+  /** @type {Record<Direction, Array<HTMLImageElement>>} */
+  #sprites = {
+    right: [pacman.right.pacman0, pacman.right.pacman1, pacman.right.pacman2, pacman.right.pacman3],
+    down: [pacman.down.pacman0, pacman.down.pacman1, pacman.down.pacman2, pacman.down.pacman3],
+    left: [pacman.left.pacman0, pacman.left.pacman1, pacman.left.pacman2, pacman.left.pacman3],
+    up: [pacman.up.pacman0, pacman.up.pacman1, pacman.up.pacman2, pacman.up.pacman3],
+  };
 
   /** @type {number} */
   #currentSprite = -1;
@@ -58,7 +61,7 @@ export class PacMan {
    */
   get #sprite() {
     this.#currentSprite = (this.#currentSprite + 1) % 4;
-    return this.#sprites[this.#currentSprite];
+    return this.#sprites[this.#direction][this.#currentSprite];
   }
 
   get positionX() {

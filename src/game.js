@@ -23,6 +23,6 @@ export class Game {
     this.#map.drawMap();
     this.#pacman.draw();
 
-    interval(100).subscribe(() => this.#pacman.move());
+    interval(40).subscribe(() => this.#pacman.move());
   }
 }

@@ -1,4 +1,4 @@
-import Pacman2URL from '@/images/pacman-2.png';
+import Pacman2URL from '@/images/pacman-2-left.png';
 
 export const pacman2 = new Image();
 
