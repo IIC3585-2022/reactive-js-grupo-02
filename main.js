@@ -1,7 +1,7 @@
-import { Map } from '@/map';
+import { Game } from '@/game';
 
 window.addEventListener('load', () => {
-  const map = new Map();
+  const game = new Game();
 
-  map.draw();
+  game.startGame();
 });
