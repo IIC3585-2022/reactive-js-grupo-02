@@ -1,0 +1,23 @@
+{
+  "name": "t2",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint ./main.js ./src",
+    "lint:fix": "eslint ./main.js ./src --fix"
+  },
+  "dependencies": {
+    "rxjs": "^7.5.5",
+    "vite": "^2.9.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.13.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.26.0"
+  }
+}
