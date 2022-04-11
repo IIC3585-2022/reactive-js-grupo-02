@@ -4,7 +4,11 @@
     "target": "esnext",
     "checkJs": true,
     "moduleResolution": "node",
-    "types": ["dom"]
+    "types": ["dom"],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src/**/*", "main.js"]
 }

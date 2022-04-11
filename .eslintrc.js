@@ -4,6 +4,15 @@ module.exports = {
     node: true,
     browser: true,
   },
+  settings: {
+    'import/resolver': {
+      alias: {
+        map: [
+          ['@', './src'],
+        ],
+      },
+    },
+  },
   extends: [
     'airbnb-base',
   ],
