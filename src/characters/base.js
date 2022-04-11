@@ -1,10 +1,8 @@
-import { SPEED, TILE_SIZE } from '@/constants';
 import { LAYOUT } from '@/layout';
-import { pacman } from '@/sprites';
-import { setupMovementListener } from '@/listeners/movement';
+import { SPEED, TILE_SIZE } from '@/constants';
 
 /**
- * @typedef {import('./drawer.js').Drawer} Drawer
+ * @typedef {import('../drawer.js').Drawer} Drawer
  */
 
 /**
@@ -12,29 +10,17 @@ import { setupMovementListener } from '@/listeners/movement';
  */
 
 /**
- * @typedef {Object} PacManOptions
- * @property {Direction=} direction
- * @property {('arrows' | 'letters')=} movementType
+ * @abstract
  */
-
-export class PacMan {
-  /** @type {Record<Direction, Array<HTMLImageElement>>} */
-  #sprites = {
-    right: [pacman.right.pacman0, pacman.right.pacman1, pacman.right.pacman2, pacman.right.pacman3],
-    down: [pacman.down.pacman0, pacman.down.pacman1, pacman.down.pacman2, pacman.down.pacman3],
-    left: [pacman.left.pacman0, pacman.left.pacman1, pacman.left.pacman2, pacman.left.pacman3],
-    up: [pacman.up.pacman0, pacman.up.pacman1, pacman.up.pacman2, pacman.up.pacman3],
-  };
-
-  /** @type {number} */
-  #currentSprite = -1;
-
+export class BaseCharacter {
   /** @type {Drawer} */
   #drawer;
 
-  #positionX = TILE_SIZE;
+  /** @type {number} */
+  #positionX;
 
-  #positionY = TILE_SIZE;
+  /** @type {number} */
+  #positionY;
 
   #moving = true;
 
@@ -45,31 +31,37 @@ export class PacMan {
   #directionIntent = null;
 
   /**
+   *
    * @param {Drawer} drawer
-   * @param {PacManOptions=} options
+   * @param {number} positionX
+   * @param {number} positionY
+   * @param {Direction} direction
    */
-  constructor(drawer, options) {
-    const { direction = 'right', movementType = 'arrows' } = options || {};
+  constructor(drawer, positionX, positionY, direction) {
     this.#drawer = drawer;
+    this.#positionX = positionX;
+    this.#positionY = positionY;
     this.#direction = direction;
+  }
 
-    setupMovementListener(this, movementType);
+  get direction() {
+    return this.#direction;
+  }
+
+  start() { // eslint-disable-line class-methods-use-this
+    throw new Error('#start isn\t implemented!');
   }
 
   /**
+   * @abstract
    * @returns {HTMLImageElement}
    */
-  get #sprite() {
-    this.#currentSprite = (this.#currentSprite + 1) % 4;
-    return this.#sprites[this.#direction][this.#currentSprite];
-  }
-
-  get positionX() {
-    return this.#positionX;
+  getSprite() { // eslint-disable-line class-methods-use-this
+    throw new Error('#getSprite isn\t implemented!');
   }
 
   draw() {
-    this.#drawer.draw(this.#sprite, this.#positionX, this.#positionY);
+    this.#drawer.draw(this.getSprite(), this.#positionX, this.#positionY);
   }
 
   undraw() {
@@ -89,6 +81,22 @@ export class PacMan {
     this.#directionIntent = direction;
   }
 
+  #changeDirection() {
+    this.#resolveDirectionIntent();
+    this.#handleWallCollisions();
+    if (this.#moving) {
+      if (this.#direction === 'right') {
+        this.#positionX += SPEED;
+      } else if (this.#direction === 'down') {
+        this.#positionY += SPEED;
+      } else if (this.#direction === 'left') {
+        this.#positionX -= SPEED;
+      } else if (this.#direction === 'up') {
+        this.#positionY -= SPEED;
+      }
+    }
+  }
+
   #resolveDirectionIntent() {
     if (!this.#directionIntent) { return; }
     if ((this.#positionX % TILE_SIZE) || (this.#positionY % TILE_SIZE)) { return; }
@@ -104,22 +112,6 @@ export class PacMan {
     if (this.#directionIntent !== this.#direction) { return; }
     this.#moving = true;
     this.#directionIntent = null;
-  }
-
-  #changeDirection() {
-    this.#resolveDirectionIntent();
-    this.#handleWallCollisions();
-    if (this.#moving) {
-      if (this.#direction === 'right') {
-        this.#positionX += SPEED;
-      } else if (this.#direction === 'down') {
-        this.#positionY += SPEED;
-      } else if (this.#direction === 'left') {
-        this.#positionX -= SPEED;
-      } else if (this.#direction === 'up') {
-        this.#positionY -= SPEED;
-      }
-    }
   }
 
   #handleWallCollisions() {
